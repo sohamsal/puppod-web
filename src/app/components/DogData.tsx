@@ -1,4 +1,6 @@
-"use client"
+'use client'
+
+
 import Papa from 'papaparse';
 import { useEffect, useState } from 'react';
 
@@ -23,7 +25,7 @@ interface Dog {
   ModifiedCreatedTime: string;
 }
 
-const dogData = () => {
+const DogData = () => {
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
 
   const parseStaticCSV = () => {
@@ -94,4 +96,4 @@ const dogData = () => {
   );
 };
 
-export default dogData;
+export default DogData;
