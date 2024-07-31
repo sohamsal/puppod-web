@@ -3,6 +3,7 @@
 
 import Papa from 'papaparse';
 import { useEffect, useState } from 'react';
+import Dropdown from './Dropdown';
 
 interface Dog {
   DogId: string;
@@ -27,6 +28,8 @@ interface Dog {
 
 const DogData = () => {
   const [selectedDog, setSelectedDog] = useState<Dog | null>(null);
+  const [dogs, setDogs] = useState<{ [name: string]: Dog }>({}); 
+  const [dogNames, setDogNames] = useState<string[]>([]); 
 
   const parseStaticCSV = () => {
     fetch('/Dog.csv')
@@ -37,63 +40,52 @@ const DogData = () => {
           complete: (results) => {
             // Assuming that you want to select the first dog
             // from the results and that at least one row exists
-            if (results.data.length > 0) {
-              setSelectedDog(results.data[0]);
+            const dogData = results.data
+            const names = dogData.map(dog => dog.Name)
+            setDogNames(names)
+            const dogMap: { [name: string]: Dog } = {};
+            for (let i = 0; i < dogData.length; i++) {
+                dogMap[dogData[i].Name] = dogData[i]
+                // dogMap[dog.Name] = dog
             }
+            setDogs(dogMap);
           }
         });
       })
       .catch(error => console.error('Error fetching and parsing: ', error));
   };
 
-  useEffect(() => {
-    parseStaticCSV();
-  }, [])
+    useEffect(() => {
+        parseStaticCSV();
+    }, [])
 
-  return (
-    selectedDog ? (
-      <>
-      
-      <div>
-        {/* <p>Name: {selectedDog.Name}</p>
-        <p>Age: {selectedDog.Primary_Breed}</p>
-        <p>Breed: {selectedDog.Gender}</p> */}
-      </div>
-      <div className="bg-transparent flex flex-row justify-center w-full">
-      <div className="w-[1512px] h-[982px]">
-        <div className="h-[982px] bg-neutral-50">
-          <div className="relative w-[1336px] h-[838px] top-[72px] left-[88px]">
-            <div className="absolute w-[1336px] h-[230px] top-0 left-0 bg-[#f2f2f2] rounded-[31px]">
-              <div className="absolute w-[358px] h-[103px] top-[63px] left-[243px]">
-                <div className="absolute w-[310px] top-0 left-0 [font-family:'Inter',Helvetica] font-semibold text-[#16181d] text-[90px] tracking-[0] leading-[normal] whitespace-nowrap">
-                  {selectedDog.Name}
-                </div>
-              </div>
-              <div className="absolute w-[1235px] h-[168px] top-[31px] left-[42px]">
-                <div className="flex flex-col items-start gap-3.5 absolute w-[337px] h-[85px] top-[42px] left-[896px]">
-                  <p className="relative self-stretch [font-family:'Inter',Helvetica] font-semibold text-[#2c2c2c] text-4xl text-right tracking-[0] leading-[normal]">
-                    <span className="[font-family:'Inter',Helvetica] font-semibold text-[#2c2c2c] text-4xl tracking-[0]">
-                    {selectedDog.Primary_Breed}<br />
-                    </span>
-                  </p>
-                  <p className="relative self-stretch [font-family:'Inter',Helvetica] font-semibold text-[#2c2c2c] text-4xl text-right tracking-[0] leading-[normal]">
-                    <span className="[font-family:'Inter',Helvetica] font-semibold text-[#2c2c2c] text-4xl tracking-[0]">
-                    {selectedDog.Gender}
-                    </span>
-                  </p>
-                </div>
-              </div>
+    const handleSelect = (selectedOption: string) => {
+        console.log('Selected option:', selectedOption);
+        setSelectedDog(dogs[selectedOption])
+    };
+
+    const secondsToDays = (seconds: number) => {
+        const days = seconds / (60 * 60 * 24);
+        return days.toFixed(2)
+    };
+
+    return (
+        <div className='flex flex-col justify-center space-y-6'>
+            <Dropdown options={dogNames} onSelect={handleSelect} />
+            <div className='flex flex-col justify-center bg-[#f2f2f2] text-black rounded-2xl min-h-20'>
+                <span className='ml-5 font-semibold text-5xl'>{selectedDog?.Name}</span>
             </div>
-          </div>
+            <div className='flex flex-col justify-around bg-[#f2f2f2] text-black rounded-2xl text-2xl font-semibold'>
+                <div className='m-5'>
+                    <div>Time Played: <span className='text-[#6d8ee3]'>{selectedDog ? secondsToDays(Number(selectedDog?.LifeTimeStats_TimePlayed)) : null} days</span></div>
+                    <div>Total Prompts: <span className='text-[#6d8ee3]'>{selectedDog?.LifeTimeStats_TotalPrompts}</span></div>
+                    <div>Total treats won: <span className='text-[#6d8ee3]'>{selectedDog?.LifeTimeStats_TreatsWon}</span></div>
+                    <div>Total treats missed: <span className='text-[#6d8ee3]'>{selectedDog?.LifeTimeStats_TotalMissed}</span></div>
+                    <div>Success rate: <span className='text-[#6d8ee3]'>{selectedDog ? Math.round(Number(selectedDog?.LifeTimeStats_SuccessRate)) : null}</span></div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-      </>
-    ) : (
-      <div>Loading...</div>
-    )
-
-  );
+    );
 };
 
 export default DogData;
