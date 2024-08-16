@@ -41,6 +41,15 @@ const Regression: React.FC = () => {
         { value: 'LifeTimeStats_TotalMissed', label: 'Total Missed' },
     ];
 
+    const varsTarget: OptionType[] = [
+        { value: 'Age', label: 'Age' },
+        { value: 'LifeTimeStats_TimePlayed', label: 'Time Played' },
+        { value: 'LifeTimeStats_TreatsWon', label: 'Treats Won' },
+        { value: 'LifeTimeStats_SuccessRate', label: 'Success Rate' },
+        { value: 'LifeTimeStats_TotalPrompts', label: 'Total Prompts' },
+        { value: 'LifeTimeStats_TotalMissed', label: 'Total Missed' },
+    ];
+
     const handleChange = (newValue: MultiValue<OptionType>, actionMeta: ActionMeta<OptionType>) => {
         setSelectedOptions(newValue as OptionType[]);
         const newInputValues = newValue.reduce((acc, option) => {
@@ -191,7 +200,7 @@ const Regression: React.FC = () => {
                 <label>
                     <h1 className='mt-5 text-md font-semibold mb-2'>Select target field to predict:</h1>
                     <Select
-                        options={vars}
+                        options={varsTarget}
                         value={targetOption}
                         onChange={handleTargetChange}
                     />
