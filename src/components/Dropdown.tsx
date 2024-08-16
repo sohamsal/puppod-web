@@ -16,7 +16,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, onSelect }) => {
   };
 
   return (
-    <select value={selectedOption} onChange={handleChange} className='rounded-xl text-xl text-black bg-[#f2f2f2] border-black'>
+    <select value={selectedOption} onChange={handleChange} className='rounded-xl text-xl text-black bg-[#f2f2f2] border-black p-4'>
         <option value="" disabled>
             [Select a dog]
         </option>
