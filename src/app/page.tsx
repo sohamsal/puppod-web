@@ -1,10 +1,18 @@
 import ChartContainer from "@/components/ChartContainer";
 import DogData from "@/components/DogData";
 import Regression from "@/components/Regression";
+import Homepage from "@/components/homepage";
 
 export default function Home() {
     return (
         <main className="h-fit bg-white flex flex-col justify-center">
+            <h1 className="mx-auto mt-10 text-white font-bold" style={{ backgroundColor: '#6d8ee3', padding: '20px 40px', borderRadius: '5px', textAlign: 'center', fontSize: '5rem' }}>
+                PupPod Data Analysis
+            </h1>
+
+            <div className='flex flex-row justify-evenly py-10'>
+                <Homepage />
+            </div>
             <h1 className="mx-auto mt-10 text-black text-4xl font-bold">Compare dogs</h1>
             <div className='flex flex-row justify-evenly py-10'>
                 <DogData />

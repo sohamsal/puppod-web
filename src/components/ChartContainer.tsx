@@ -30,8 +30,8 @@ const calculateIQR = (data: number[]): [number, number] => {
 
 const DogDataChart: React.FC = () => {
   const [dogs, setDogs] = useState<Dog[]>([]);
-  const [xAxis, setXAxis] = useState<keyof Dog | any>('Name');
-  const [yAxis, setYAxis] = useState<keyof Dog | any>('TimePlayed');
+  const [xAxis, setXAxis] = useState<keyof Dog | null>(null); // Initialize as null
+  const [yAxis, setYAxis] = useState<keyof Dog | null>(null); // Initialize as null
   const [xAxisFilter, setXAxisFilter] = useState<string[]>([]);
 
   useEffect(() => {
@@ -63,9 +63,7 @@ const DogDataChart: React.FC = () => {
     };
 
     fetchDogs();
-    setYAxis('TimePlayed');
-    setXAxis('Name');
-  }, []);
+  }, []); // Removed setYAxis and setXAxis to keep initial state as null
 
   const numericFields: (keyof Dog)[] = [
     'TimePlayed',
@@ -85,7 +83,7 @@ const DogDataChart: React.FC = () => {
   const uniqueDogs = useMemo(() => {
     const seen = new Set();
     return transformedDogs.filter(dog => {
-      const value = dog[xAxis as keyof Dog].toString();
+      const value = dog[xAxis as keyof Dog]?.toString(); // Optional chaining
       if (seen.has(value)) {
         return false;
       } else {
@@ -96,13 +94,13 @@ const DogDataChart: React.FC = () => {
   }, [transformedDogs, xAxis]);
 
   const xAxisValues = useMemo(() => {
-    const uniqueValues = new Set(uniqueDogs.map(dog => dog[xAxis as keyof Dog].toString()));
+    const uniqueValues = new Set(uniqueDogs.map(dog => dog[xAxis as keyof Dog]?.toString())); // Optional chaining
     return Array.from(uniqueValues).map(value => ({ value, label: value }));
   }, [uniqueDogs, xAxis]);
 
   const filteredDogs = useMemo(() => {
     return xAxisFilter.length > 0
-      ? uniqueDogs.filter(dog => xAxisFilter.includes(dog[xAxis as keyof Dog].toString()))
+      ? uniqueDogs.filter(dog => xAxisFilter.includes(dog[xAxis as keyof Dog]?.toString())) // Optional chaining
       : uniqueDogs;
   }, [uniqueDogs, xAxis, xAxisFilter]);
 
@@ -120,7 +118,7 @@ const DogDataChart: React.FC = () => {
           </label>
           <select
             id="xAxis"
-            value={xAxis}
+            value={xAxis || ''} // Empty string if null
             onChange={(e) => setXAxis(e.target.value as keyof Dog | 'Age')}
             style={{
               padding: '10px',
@@ -130,6 +128,7 @@ const DogDataChart: React.FC = () => {
               cursor: 'pointer',
             }}
           >
+            <option value="" disabled>Select X-Axis</option>
             {xAxisOptions.map((key) => (
               <option key={key} value={key}>
                 {key}
@@ -137,14 +136,14 @@ const DogDataChart: React.FC = () => {
             ))}
           </select>
         </div>
-
+  
         <div>
           <label htmlFor="yAxis" style={{ marginRight: '10px', fontWeight: 'bold' }}>
             Y-Axis (Dog performance):
           </label>
           <select
             id="yAxis"
-            value={yAxis}
+            value={yAxis || ''} // Empty string if null
             onChange={(e) => setYAxis(e.target.value as keyof Dog)}
             style={{
               padding: '10px',
@@ -154,6 +153,7 @@ const DogDataChart: React.FC = () => {
               cursor: 'pointer',
             }}
           >
+            <option value="" disabled>Select Y-Axis</option>
             {numericFields.map((key) => (
               <option key={key} value={key}>
                 {key}
@@ -162,25 +162,30 @@ const DogDataChart: React.FC = () => {
           </select>
         </div>
       </div>
-      <label>
-        Filter {xAxis}:
-        <Select
-          isMulti
-          options={xAxisValues}
-          onChange={handleXAxisFilterChange}
-          value={xAxisValues.filter(option => xAxisFilter.includes(option.value))}
-        />
-      </label>
-      {dogs.length > 0 && (
-        <FlexibleChart
-          data={filteredDogs}
-          xAxis={xAxis}
-          yAxis={yAxis}
-          title={`${yAxis} vs ${xAxis}`}
-        />
+  
+      {/* Conditional Rendering Block */}
+      {xAxis && yAxis && (
+        <>
+          <label>
+            Filter {xAxis}:
+            <Select
+              isMulti
+              options={xAxisValues}
+              onChange={handleXAxisFilterChange}
+              value={xAxisValues.filter(option => xAxisFilter.includes(option.value))}
+            />
+          </label>
+          {dogs.length > 0 && (
+            <FlexibleChart
+              data={filteredDogs}
+              xAxis={xAxis}
+              yAxis={yAxis}
+              title={`${yAxis} vs ${xAxis}`}
+            />
+          )}
+        </>
       )}
     </div>
   );
-};
-
+}  
 export default DogDataChart;

@@ -11,13 +11,16 @@
   "dependencies": {
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.45.1",
+    "axios": "^1.7.4",
     "csvtojson": "^2.0.10",
     "next": "14.2.3",
     "papaparse": "^5.4.1",
     "react": "^18",
+    "react-bootstrap": "^2.10.4",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
     "react-select": "^5.8.0",
+    "react-simple-typewriter": "^5.0.1",
     "recharts": "^2.12.7",
     "regression": "^2.0.1"
   },
