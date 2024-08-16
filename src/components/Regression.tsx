@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Select, { MultiValue, ActionMeta } from 'react-select';
 
-// Define the format for options
 interface OptionType {
     value: string;
     label: string;
@@ -12,7 +11,6 @@ const Regression: React.FC = () => {
     const [selectedOptions, setSelectedOptions] = useState<OptionType[]>([]);
     const [targetOption, setTargetOption] = useState<OptionType | null>(null);
 
-    // Define options in the format expected by react-select
     const vars: OptionType[] = [
         { value: 'Primary_Breed', label: 'Primary Breed' },
         { value: 'Gender', label: 'Gender' },
