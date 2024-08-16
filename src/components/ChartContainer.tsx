@@ -1,11 +1,10 @@
-"use client"
+'use client';
 import React, { useEffect, useState, useMemo } from 'react';
 import Select from 'react-select';
 import FlexibleChart from './FlexibleChart';
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/client';
 
 interface Dog {
-  // DogId: string;
   Name: string;
   Age: string;
   Primary_Breed: string;
@@ -17,17 +16,22 @@ interface Dog {
   SuccessRate: string;
   TotalPrompts: string;
   TotalMissed: string;
-  // TotalNegPrompts: string;
-  // TotalHitsNegSound: string;
-  // ModifiedCreatedTime: string;
 }
 
 const supabase = createClient();
 
+const calculateIQR = (data: number[]): [number, number] => {
+  data.sort((a, b) => a - b);
+  const q1 = data[Math.floor((data.length / 4))];
+  const q3 = data[Math.floor((3 * data.length) / 4)];
+  const iqr = q3 - q1;
+  return [q1 - 1.5 * iqr, q3 + 1.5 * iqr];
+};
+
 const DogDataChart: React.FC = () => {
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [xAxis, setXAxis] = useState<keyof Dog | any>('Name');
-  const [yAxis, setYAxis] = useState<keyof Dog | any>('LifeTimeStats_TimePlayed');
+  const [yAxis, setYAxis] = useState<keyof Dog | any>('TimePlayed');
   const [xAxisFilter, setXAxisFilter] = useState<string[]>([]);
 
   useEffect(() => {
@@ -38,7 +42,21 @@ const DogDataChart: React.FC = () => {
           .select('*');
 
         if (error) throw error;
-        setDogs(data || []);
+
+        // Extract numeric fields for IQR calculation
+        const numericFields = ['TimePlayed', 'TreatsWon', 'SuccessRate', 'TotalPrompts', 'TotalMissed'];
+
+        // Create a filtered array with outliers removed
+        const dataWithoutOutliers = data?.filter((dog) => {
+          return numericFields.every((field) => {
+            const values = data.map((d) => parseFloat(d[field]));
+            const [min, max] = calculateIQR(values);
+            const value = parseFloat(dog[field]);
+            return value >= min && value <= max;
+          });
+        }) as Dog[];
+
+        setDogs(dataWithoutOutliers || []);
       } catch (error) {
         console.error('Error fetching data: ', error);
       }
@@ -57,25 +75,13 @@ const DogDataChart: React.FC = () => {
     'TotalMissed',
   ];
 
-  const xAxisOptions: (keyof Dog | 'Age')[] = ['Name',  'Primary_Breed', 'Gender', 'Neutered', 'Age'];
-
-  // const calculateAge = (birthDate: string): number => {
-  //   const birth = new Date(birthDate);
-  //   const now = new Date();
-  //   let age = now.getFullYear() - birth.getFullYear();
-  //   const monthDiff = now.getMonth() - birth.getMonth();
-  //   if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birth.getDate())) {
-  //     age--;
-  //   }
-  //   return age;
-  // };
+  const xAxisOptions: (keyof Dog | 'Age')[] = ['Name', 'Primary_Breed', 'Gender', 'Neutered', 'Age'];
 
   const transformedDogs = dogs.map(dog => ({
     ...dog,
     Age: dog.Age
   }));
 
-  // Filter out duplicate entries based on the selected xAxis value
   const uniqueDogs = useMemo(() => {
     const seen = new Set();
     return transformedDogs.filter(dog => {

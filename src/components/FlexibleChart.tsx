@@ -11,7 +11,6 @@ import {
 } from 'recharts';
 
 interface Dog {
-  // DogId: string;
   Name: string;
   Age: string;
   Primary_Breed: string;
@@ -23,9 +22,6 @@ interface Dog {
   SuccessRate: string;
   TotalPrompts: string;
   TotalMissed: string;
-  // TotalNegPrompts: string;
-  // TotalHitsNegSound: string;
-  // ModifiedCreatedTime: string;
 }
 
 interface FlexibleChartProps {
@@ -48,7 +44,13 @@ const FlexibleChart: React.FC<FlexibleChartProps> = ({ data, xAxis, yAxis, title
         <ScatterChart>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="x" name={xAxis} />
-          <YAxis dataKey="y" name={yAxis} className='text-sm'/>
+          <YAxis
+            dataKey="y"
+            name={yAxis}
+            className='text-xs'
+            tickFormatter={(tick) => tick.toString()} // Ensure labels are converted to strings
+            width={80} // Adjust width if necessary
+          />
           <Tooltip cursor={{ strokeDasharray: '3 3' }} />
           <Legend />
           <Scatter name="Data Points" data={formattedData} fill="#6d8ee3" />
