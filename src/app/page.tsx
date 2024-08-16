@@ -12,7 +12,7 @@ export default function Home() {
             </div>
             <hr className="w-1/2 mx-auto my-10" />
             <div className="bg-white text-black p-4 flex flex-col my-10 mx-4">
-                <h1 className="mx-auto mb-10 text-black text-4xl font-bold">Dog performance vs. Dog features data</h1>
+                <h1 className="mx-auto mb-10 text-black text-4xl font-bold">Plot dog data</h1>
                 <ChartContainer />
             </div>
             <hr className="w-1/2 mx-auto mt-10" />

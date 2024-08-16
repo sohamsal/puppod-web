@@ -116,7 +116,7 @@ const DogDataChart: React.FC = () => {
       <div className='flex flex-row justify-around'>
         <div>
           <label htmlFor="xAxis" style={{ marginRight: '10px', fontWeight: 'bold' }}>
-            X-Axis:
+            X-Axis (Dog features):
           </label>
           <select
             id="xAxis"
@@ -140,7 +140,7 @@ const DogDataChart: React.FC = () => {
 
         <div>
           <label htmlFor="yAxis" style={{ marginRight: '10px', fontWeight: 'bold' }}>
-            Y-Axis:
+            Y-Axis (Dog performance):
           </label>
           <select
             id="yAxis"
